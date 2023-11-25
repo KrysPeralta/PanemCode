@@ -428,7 +428,81 @@ public class Compiler extends javax.swing.JFrame {
         
         gramatica.delete(new String[]{"ERROR"}, 1);
         
-        gramatica.group("Valor", "(Entero | Decimal | Texto | Booleano | Variable)", true);
+        //CONCATENACION
+        gramatica.loopForFunExecUntilChangeNotDetected(() -> {
+            gramatica.group("CONCATENACION", "(TEXTO | VARIABLE) OPCONCATENACION (TEXTO | VARIABLE)", true);
+            gramatica.group("TEXTO", "TEXTO | CONCATENACION", true);
+        });
+        
+        //VALORES  
+        gramatica.group("VALOR", "(ENTERO | DECIMAL | TEXTO | BOOLEANO)", true);
+        
+        //DECLARACION DE VARIABLES
+        gramatica.group("DECLARACION", "PRDECLARAR VARIABLE OPASIGNACION VALOR", true);
+        
+        //ASIGNACIÓN DE VALORES
+        gramatica.group("ASIGNACION", "VARIABLE OPASIGNACION VALOR", true);
+        
+        //SALIDA DE MENSAJES
+        gramatica.group("MOSTRAR", "PRMOSTRAR (VALOR | VARIABLE)", true);
+        
+        //LEER ENTRADA
+        
+        gramatica.group("LEER", "PRLEER VARIABLE", true);
+        
+        //EXPRESIONES ARITMETICAS
+        
+        //ESTRUCTURAS RELACIONALES
+        //gramatica.loopForFunExecUntilChangeNotDetected(() -> {
+            gramatica.group("RELACION", "(VALOR | VARIABLE) OPRELACIONAL (VALOR | VARIABLE)", true);
+            
+            gramatica.group("LOGICA", "RELACION OPLOGICO RELACION (OPLOGICO RELACION)*");
+            
+            gramatica.group("COMPARACION", "RELACION OPCOMPARACION RELACION (OPCOMPARACION RELACION)*");
+            
+            gramatica.group("CONDICION", "RELACION | LOGICA | COMPARACION", true);
+        //});
+        
+        //OPERACIONES DE COMBINACIÓN
+        gramatica.group("COMBINACION", "VARIABLE OPCOMBINADO (VALOR | VARIABLE)", true);
+        
+        //OPERACIONES UNARIAS
+        gramatica.group("UNARIA", "(OPINCREMENTO | OPDECREMENTO | OPINVERSION) VARIABLE", true);
+        
+        //CUERPO DEL PROGRAMA
+        //gramatica.loopForFunExecUntilChangeNotDetected(() -> {
+            gramatica.group("INSTRUCCION", "ASIGNACION | DECLARACION | MOSTRAR | LEER | COMBINACION | UNARIA | INSTRUCCION", true);
+            //gramatica.group("INICIO", "PRINICIO (INSTRUCCION)*");
+            //gramatica.group("FIN", "PRFIN", true);
+            //gramatica.group("PROGRAMA", "INICIO FIN", true);
+        //});
+        
+        gramatica.loopForFunExecUntilChangeNotDetected(() -> {
+            //ESTRUCTURA CONDICIONAL
+            gramatica.group("EST_CONDICIONAL", "PRCHECK PARENABRIR CONDICION PARENCERRAR PRPROBE (INSTRUCCION)+ (PRUNLIKE (INSTRUCCION)+)?");
+
+            //ESTRUCTURA DE CICLO
+            //-------------------
+            //gramatica.group("EST_CICLO", "PRREPEAT (INSTRUCCION)+ PRUNTIL PARENABRIR CONDICION PARENCERRAR");
+
+            gramatica.group("INSTRUCCION", "EST_CONDICIONAL | ASIGNACION | DECLARACION | MOSTRAR | LEER | COMBINACION | UNARIA | INSTRUCCION", true);
+
+            //aqui iba el ciclo
+            //ESTRUCTURA DE CICLO
+            gramatica.group("EST_CICLO", "PRREPEAT (INSTRUCCION)+ PRUNTIL PARENABRIR CONDICION PARENCERRAR");
+            //-----
+            gramatica.group("INSTRUCCION", "EST_CICLO | EST_CONDICIONAL | ASIGNACION | DECLARACION | MOSTRAR | LEER | COMBINACION | UNARIA | INSTRUCCION", true);
+
+            gramatica.group("EST_CICLO", "PRREPEAT (INSTRUCCION)+ PRUNTIL PARENABRIR CONDICION PARENCERRAR");
+
+            gramatica.group("EST_CONDICIONAL", "PRCHECK PARENABRIR CONDICION PARENCERRAR PRPROBE (INSTRUCCION)+ (PRUNLIKE (INSTRUCCION)+)?");
+
+            gramatica.group("INSTRUCCION", "EST_CICLO | EST_CONDICIONAL | ASIGNACION | DECLARACION | MOSTRAR | LEER | COMBINACION | UNARIA | INSTRUCCION", true); 
+        });
+        
+        gramatica.group("INICIO", "PRINICIO (INSTRUCCION)*");
+        gramatica.group("FIN", "PRFIN", true);
+        gramatica.group("PROGRAMA", "INICIO FIN", true);
         
         gramatica.show();
     }
