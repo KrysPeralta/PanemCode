@@ -440,15 +440,41 @@ public class Compiler extends javax.swing.JFrame {
         //DECLARACION DE VARIABLES
         gramatica.group("DECLARACION", "PRDECLARAR VARIABLE OPASIGNACION VALOR", true);
         
+        gramatica.group("DECLARACION", "PRDECLARAR VALOR OPASIGNACION VARIABLE", true, 
+                1, "ERROR SINTÁCTICO {}: Declaración no válida [#]");
+        gramatica.group("DECLARACION", "PRDECLARAR OPASIGNACION VALOR", true, 
+                2, "ERROR SINTÁCTICO {}: Declaración no válida [#]");
+        gramatica.group("DECLARACION", "PRDECLARAR VARIABLE VALOR", true, 
+                3, "ERROR SINTÁCTICO {}: Se espera signo de asignación [#]");
+        gramatica.group("DECLARACION", "PRDECLARAR VARIABLE OPASIGNACION", true, 
+                4, "ERROR SINTÁCTICO {}: Se espera valor en la declaración [#]");
+        gramatica.group("DECLARACION", "PRDECLARAR VARIABLE", true, 
+                5, "ERROR SINTÁCTICO {}: Declaración no válida [#]");
+        gramatica.group("DECLARACION", "PRDECLARAR VALOR", true, 
+                6, "ERROR SINTÁCTICO {}: Declaración no válida [#]");
+        gramatica.group("DECLARACION", "PRDECLARAR OPASIGNACION", true, 
+                7, "ERROR SINTÁCTICO {}: Declaración no válida [#]");
+        
         //ASIGNACIÓN DE VALORES
         gramatica.group("ASIGNACION", "VARIABLE OPASIGNACION VALOR", true);
+        
+        gramatica.group("ASIGNACION", "VALOR OPASIGNACION VARIABLE", true, 
+                8, "ERROR SINTÁCTICO {}: Asignación no válida [#]");
+        gramatica.group("ASIGNACION", "OPASIGNACION VALOR", true, 
+                9, "ERROR SINTÁCTICO {}: Se necesita variable para asignar valor [#]");
+        gramatica.group("ASIGNACION", "VARIABLE VALOR", true, 
+                10, "ERROR SINTÁCTICO {}: Se espera signo de asignación [#]");
+        gramatica.group("ASIGNACION", "VARIABLE OPASIGNACION", true, 
+                11, "ERROR SINTÁCTICO {}: Se espera valor en la asignación [#]");
         
         //SALIDA DE MENSAJES
         gramatica.group("MOSTRAR", "PRMOSTRAR (VALOR | VARIABLE)", true);
         
         //LEER ENTRADA
-        
         gramatica.group("LEER", "PRLEER VARIABLE", true);
+        
+        gramatica.group("LEER", "PRLEER VALOR", true, 
+                12, "ERROR SINTÁCTICO {}: Sentencia no válida [#]");
         
         //EXPRESIONES ARITMETICAS
         
@@ -456,9 +482,24 @@ public class Compiler extends javax.swing.JFrame {
         //gramatica.loopForFunExecUntilChangeNotDetected(() -> {
             gramatica.group("RELACION", "(VALOR | VARIABLE) OPRELACIONAL (VALOR | VARIABLE)", true);
             
+            gramatica.group("RELACION", "OPRELACIONAL (VALOR | VARIABLE)", true, 
+                    13, "ERROR SINTÁCTICO {}: Se necesita otro valor en la relación [#]");
+            gramatica.group("RELACION", "(VALOR | VARIABLE) OPRELACIONAL", true, 
+                    13, "ERROR SINTÁCTICO {}: Se necesita otro valor en la relación [#]");
+            
             gramatica.group("LOGICA", "RELACION OPLOGICO RELACION (OPLOGICO RELACION)*");
             
+            gramatica.group("LOGICA", "OPLOGICO RELACION (OPLOGICO RELACION)*", 
+                    14, "ERROR SINTÁCTICO {}: Se necesita otro valor en la comparación [#]");
+            gramatica.group("LOGICA", "RELACION OPLOGICO (OPLOGICO RELACION)*", 
+                    14, "ERROR SINTÁCTICO {}: Se necesita otro valor en la comparación [#]");
+            
             gramatica.group("COMPARACION", "RELACION OPCOMPARACION RELACION (OPCOMPARACION RELACION)*");
+            
+            gramatica.group("COMPARACION", "OPCOMPARACION RELACION (OPCOMPARACION RELACION)*", 
+                    14, "ERROR SINTÁCTICO {}: Se necesita otro valor en la comparación [#]");
+            gramatica.group("COMPARACION", "RELACION OPCOMPARACION (OPCOMPARACION RELACION)*", 
+                    14, "ERROR SINTÁCTICO {}: Se necesita otro valor en la comparación [#]");
             
             gramatica.group("CONDICION", "RELACION | LOGICA | COMPARACION", true);
         //});
@@ -466,8 +507,19 @@ public class Compiler extends javax.swing.JFrame {
         //OPERACIONES DE COMBINACIÓN
         gramatica.group("COMBINACION", "VARIABLE OPCOMBINADO (VALOR | VARIABLE)", true);
         
+        gramatica.group("COMBINACION", "OPCOMBINADO (VALOR | VARIABLE)", true, 
+                15, "ERROR SINTÁCTICO {}: Se necesita otro valor [#]");
+        //-------------
+        gramatica.group("COMBINACION", "VALOR OPCOMBINADO (VALOR | VARIABLE)", true, 
+                16, "ERROR SINTÁCTICO {}: Sentencia no válida [#]");
+        
         //OPERACIONES UNARIAS
         gramatica.group("UNARIA", "(OPINCREMENTO | OPDECREMENTO | OPINVERSION) VARIABLE", true);
+        
+        gramatica.group("UNARIA", "VARIABLE (OPINCREMENTO | OPDECREMENTO | OPINVERSION)", true, 
+                17, "ERROR SINTÁCTICO {}: Sentencia no válida [#]");
+        gramatica.group("UNARIA", "(OPINCREMENTO | OPDECREMENTO | OPINVERSION) VALOR", true, 
+                18, "ERROR SINTÁCTICO {}: Sentencia no válida [#]");
         
         //CUERPO DEL PROGRAMA
         //gramatica.loopForFunExecUntilChangeNotDetected(() -> {
@@ -479,23 +531,20 @@ public class Compiler extends javax.swing.JFrame {
         
         gramatica.loopForFunExecUntilChangeNotDetected(() -> {
             //ESTRUCTURA CONDICIONAL
-            gramatica.group("EST_CONDICIONAL", "PRCHECK PARENABRIR CONDICION PARENCERRAR PRPROBE (INSTRUCCION)+ (PRUNLIKE (INSTRUCCION)+)?");
+            gramatica.group("EST_CONDICIONAL", "PRCHECK PARENABRIR CONDICION PARENCERRAR LLAVEABRIR PRPROBE (INSTRUCCION)+ (PRUNLIKE (INSTRUCCION)+)? LLAVECERRAR");
 
-            //ESTRUCTURA DE CICLO
-            //-------------------
-            //gramatica.group("EST_CICLO", "PRREPEAT (INSTRUCCION)+ PRUNTIL PARENABRIR CONDICION PARENCERRAR");
-
+            //Repetición de instrucciones
             gramatica.group("INSTRUCCION", "EST_CONDICIONAL | ASIGNACION | DECLARACION | MOSTRAR | LEER | COMBINACION | UNARIA | INSTRUCCION", true);
 
-            //aqui iba el ciclo
             //ESTRUCTURA DE CICLO
-            gramatica.group("EST_CICLO", "PRREPEAT (INSTRUCCION)+ PRUNTIL PARENABRIR CONDICION PARENCERRAR");
-            //-----
+            gramatica.group("EST_CICLO", "PRREPEAT LLAVEABRIR (INSTRUCCION)+ LLAVECERRAR PRUNTIL PARENABRIR CONDICION PARENCERRAR");
+            
+            //Repetición de instrucciones
             gramatica.group("INSTRUCCION", "EST_CICLO | EST_CONDICIONAL | ASIGNACION | DECLARACION | MOSTRAR | LEER | COMBINACION | UNARIA | INSTRUCCION", true);
 
-            gramatica.group("EST_CICLO", "PRREPEAT (INSTRUCCION)+ PRUNTIL PARENABRIR CONDICION PARENCERRAR");
+            gramatica.group("EST_CICLO", "PRREPEAT LLAVEABRIR (INSTRUCCION)+ LLAVECERRAR PRUNTIL PARENABRIR CONDICION PARENCERRAR");
 
-            gramatica.group("EST_CONDICIONAL", "PRCHECK PARENABRIR CONDICION PARENCERRAR PRPROBE (INSTRUCCION)+ (PRUNLIKE (INSTRUCCION)+)?");
+            gramatica.group("EST_CONDICIONAL", "PRCHECK PARENABRIR CONDICION PARENCERRAR LLAVEABRIR PRPROBE (INSTRUCCION)+ (PRUNLIKE (INSTRUCCION)+)? LLAVECERRAR");
 
             gramatica.group("INSTRUCCION", "EST_CICLO | EST_CONDICIONAL | ASIGNACION | DECLARACION | MOSTRAR | LEER | COMBINACION | UNARIA | INSTRUCCION", true); 
         });
