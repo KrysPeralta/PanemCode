@@ -40,6 +40,10 @@ public class Compiler extends javax.swing.JFrame {
     private Timer timerKeyReleased;
     private ArrayList<Production> identProd;
     private ArrayList<Production> asigProd;
+    private ArrayList<Production> unarProd;
+    private ArrayList<Production> combProd;
+    private ArrayList<Production> expProd;
+    private ArrayList<Production> relaProd;
     private HashMap<String, String> identificadores;
     private boolean codeHasBeenCompiled = false;
 
@@ -345,7 +349,11 @@ public class Compiler extends javax.swing.JFrame {
         errors = new ArrayList<>();
         textsColor = new ArrayList<>();
         identProd = new ArrayList<>();
+        unarProd = new ArrayList<>();
         asigProd = new ArrayList<>();
+        combProd = new ArrayList<>();
+        expProd = new ArrayList<>();
+        relaProd = new ArrayList<>();
         identificadores = new HashMap<>();
         Functions.setAutocompleterJTextComponent(new String[]{"hola", "adios", "hasta la proxima", 
             "oli"}, CodeText, () -> {
@@ -387,6 +395,10 @@ public class Compiler extends javax.swing.JFrame {
         errors.clear();
         identProd.clear();
         asigProd.clear();
+        unarProd.clear();
+        combProd.clear();
+        expProd.clear();
+        relaProd.clear();
         identificadores.clear();
         codeHasBeenCompiled = false;
     }
@@ -442,7 +454,7 @@ public class Compiler extends javax.swing.JFrame {
         
         //EXPRESIONES ARITMETICAS
         gramatica.loopForFunExecUntilChangeNotDetected(() -> {
-            gramatica.group("EXPRESION", "(VALOR | VARIABLE) ((OPSUMA | OPRESTA | OPDIVISION | OPMULTIPLICACION) (VALOR | VARIABLE))+");
+            gramatica.group("EXPRESION", "(VALOR | VARIABLE) ((OPSUMA | OPRESTA | OPDIVISION | OPMULTIPLICACION) (VALOR | VARIABLE))+", expProd);
         });
         
         //DECLARACION DE VARIABLES
@@ -495,7 +507,7 @@ public class Compiler extends javax.swing.JFrame {
         
         //ESTRUCTURAS RELACIONALES
         //gramatica.loopForFunExecUntilChangeNotDetected(() -> {
-            gramatica.group("RELACION", "(VALOR | VARIABLE) OPRELACIONAL (VALOR | VARIABLE)", true);
+            gramatica.group("RELACION", "(VALOR | VARIABLE) OPRELACIONAL (VALOR | VARIABLE)", true, relaProd);
             
             gramatica.group("RELACION", "OPRELACIONAL (VALOR | VARIABLE)", true, 
                     13, "ERROR SINTÁCTICO {}: Se necesita otro valor en la relación [#]");
@@ -520,7 +532,7 @@ public class Compiler extends javax.swing.JFrame {
         //});
         
         //OPERACIONES DE COMBINACIÓN
-        gramatica.group("COMBINACION", "VARIABLE OPCOMBINADO (VALOR | VARIABLE)", true);
+        gramatica.group("COMBINACION", "VARIABLE OPCOMBINADO (VALOR | VARIABLE)", true, combProd);
         
         gramatica.group("COMBINACION", "OPCOMBINADO (VALOR | VARIABLE)", true, 
                 15, "ERROR SINTÁCTICO {}: Se necesita otro valor [#]");
@@ -529,7 +541,7 @@ public class Compiler extends javax.swing.JFrame {
                 16, "ERROR SINTÁCTICO {}: Sentencia no válida [#]");
         
         //OPERACIONES UNARIAS
-        gramatica.group("UNARIA", "(OPINCREMENTO | OPDECREMENTO | OPINVERSION) VARIABLE", true);
+        gramatica.group("UNARIA", "(OPINCREMENTO | OPDECREMENTO | OPINVERSION) VARIABLE", true, unarProd);
         
         gramatica.group("UNARIA", "VARIABLE (OPINCREMENTO | OPDECREMENTO | OPINVERSION)", true, 
                 17, "ERROR SINTÁCTICO {}: Sentencia no válida [#]");
@@ -606,14 +618,11 @@ public class Compiler extends javax.swing.JFrame {
     }
     
     private void semanticAnalysis(){
-        //HashMap<String, String> identDataType = new HashMap<>();
-        //identDataType.put("color", "COLOR");
-        //identDataType.put("número", "NUMERO");
+        //System.out.println(identDataType.get("edad"));
+        
+        HashMap<String, String> identDataType = new HashMap<>();
+        
         for (Production id : identProd) {
-            
-            //-----------LAS PRODUCCIONES
-            //System.out.println(id);
-            //System.out.println("*");
             
             //-----------METODOS
 //            System.out.println(id.lexemeRank(0)); //te da la palabra en la posición indicada
@@ -625,36 +634,101 @@ public class Compiler extends javax.swing.JFrame {
 //            System.out.println("*");
             
             identificadores.put(id.lexemeRank(1), id.lexemeRank(-1));
+            identDataType.put(id.lexemeRank(1), id.lexicalCompRank(-1));
             
-            
-            //if (!identDataType.get(id.lexemeRank(0)).equals(id.lexicalCompRank(-1))) {
-              //  errors.add(new ErrorLSSL(1, " × Error semántico {}: valor no compatible con el tipo de dato [#, %]", id, true));
-            //}
-            //if (id.lexicalCompRank(-1).equals("COLOR") && !id.lexemeRank(-1).matches("#[0-9a-fA-F]+")) {
-              //  errors.add(new ErrorLSSL(2, " × Error lógico {}: el color no es un número hexadecimal [#, %]", id, false));
-            //}
-            //identificadores.put(id.lexemeRank(1), id.lexemeRank(-1));
         }
-//        System.out.println("--------------");
-//        if(identificadores.get("alumnos_aceptados") == null){
-//            System.out.println("hola");
-//        } else{
-//            System.out.println(identificadores.get("alumnos_rechazados"));
-//        }
-//        System.out.println("--------------");
         
-        System.out.println("--------------");
+        System.out.println("------ASIGNACIÓN--------");
         
         for (Production id : asigProd){
             
             if(identificadores.get(id.lexemeRank(0)) == null){
                 errors.add(new ErrorLSSL(1, "ERROR SEMÁNTICO {}: Variable no definida [#]", id, true));
-                System.out.println("NO SE PUEDE HACER LA ASIGNACIÓN");
-                System.out.println("******************");
+                //System.out.println("NO SE PUEDE HACER LA ASIGNACIÓN");
+                //System.out.println("******************");
             } else{
                 identificadores.replace(id.lexemeRank(0), id.lexemeRank(-1));
-                System.out.println("SI SE PUEDE HACER LA ASIGNACIÓN");
+                identDataType.replace(id.lexemeRank(0), id.lexicalCompRank(-1));
+                //System.out.println("SI SE PUEDE HACER LA ASIGNACIÓN");
+                //System.out.println("******************");
+            }
+        }
+        
+        System.out.println("--------------");
+        
+        
+        System.out.println("-------UNARIOS-------");
+        
+        for (Production id : unarProd){
+            
+            if(identificadores.get(id.lexemeRank(1)) == null){
+                errors.add(new ErrorLSSL(1, "ERROR SEMÁNTICO {}: Variable no definida [#]", id, true));
+                //System.out.println("NO SE ENCONTRÓ EL IDENTIFICADOR");
+                //System.out.println("******************");
+            } else if (!"ENTERO".equals(identDataType.get(id.lexemeRank(1))) && !"DECIMAL".equals(identDataType.get(id.lexemeRank(1)))){
+                errors.add(new ErrorLSSL(2, "ERROR SEMÁNTICO {}: El valor debe ser Entero o Decimal [#]", id, true));
+                //System.out.println("EL TIPO DE DATO NO ES ENTERO NI DECIMAL");
+                //System.out.println("******************");
+            } else {
+                int nuevoValor = Integer.parseInt(identificadores.get(id.lexemeRank(1)));
+                nuevoValor++;
+                String incrementar = String.valueOf(nuevoValor);
+                
+                identificadores.replace(id.lexemeRank(1), incrementar);
+                
+                //System.out.println("SI SE PUEDE HACER LA OPERACIÓN");
+                //System.out.println("******************");
+            }
+        }
+        
+        System.out.println("--------------");
+        
+
+        System.out.println("-------COMBINACION-------");
+        
+        for (Production id : combProd){
+
+            if(identificadores.get(id.lexemeRank(0)) == null){
+                //errors.add(new ErrorLSSL(1, "ERROR SEMÁNTICO {}: Variable no definida [#]", id, true));
+                System.out.println("NO SE ENCONTRÓ EL IDENTIFICADOR");
                 System.out.println("******************");
+            } 
+            //else {
+                //int nuevoValor = Integer.parseInt(identificadores.get(id.lexemeRank(1)));
+                //nuevoValor++;
+                //String incrementar = String.valueOf(nuevoValor);
+                
+                //identificadores.replace(id.lexemeRank(1), incrementar);
+                
+              //  System.out.println("SI SE PUEDE HACER LA OPERACIÓN");
+              //  System.out.println("******************");
+            //}
+        }
+        
+        System.out.println("--------------");
+        
+        System.out.println("-------EXPRESIONES-------");
+        
+        for (Production id : expProd){
+            
+        }
+        
+        System.out.println("--------------");
+        
+        
+        System.out.println("-------RELACIONES-------");
+        
+        for (Production id : relaProd){
+
+            if(identificadores.get(id.lexemeRank(0)) == null){
+                errors.add(new ErrorLSSL(1, "ERROR SEMÁNTICO {}: Variable no definida [#]", id, true));
+                //System.out.println("NO SE PUEDE HACER LA ASIGNACIÓN");
+                //System.out.println("******************");
+            } else{
+                identificadores.replace(id.lexemeRank(0), id.lexemeRank(-1));
+                identDataType.replace(id.lexemeRank(0), id.lexicalCompRank(-1));
+                //System.out.println("SI SE PUEDE HACER LA ASIGNACIÓN");
+                //System.out.println("******************");
             }
         }
         

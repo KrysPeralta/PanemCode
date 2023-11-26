@@ -9,11 +9,7 @@ power on
 
 	establish alumno := 1
 
-	edad := 5
-
-	popo := "hola"
-
-	razon_alumnos := "nel"
+	establish gracia := true
 
 	repeat {
 
