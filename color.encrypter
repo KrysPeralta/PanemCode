@@ -1,3 +1,5 @@
+establish adios := 2 + 3 - hola
+
 establish := 4
 
 establish hola 5
@@ -27,7 +29,7 @@ repeat {
 	show: "Registre la edad del alumno " % alumno % " : "
 	read edad
 
-	check (edad > 18 AND edad < 25 AND ingresoMensual < 5000 AND promedio >= 90 AND promedio <= 100) {
+	check edad > 18 AND edad < 25 AND ingresoMensual < 5000 AND promedio >= 90 AND promedio <= 100 {
 		probe
 			INC alumnos_aceptados
 		unlike

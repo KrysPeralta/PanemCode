@@ -1,3 +1,5 @@
+establish adios := 2 + 3 - hola
+
 establish := 4
 
 establish hola 5

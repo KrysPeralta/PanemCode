@@ -437,32 +437,40 @@ public class Compiler extends javax.swing.JFrame {
         //VALORES  
         gramatica.group("VALOR", "(ENTERO | DECIMAL | TEXTO | BOOLEANO)", true);
         
-        //DECLARACION DE VARIABLES
-        gramatica.group("DECLARACION", "PRDECLARAR VARIABLE OPASIGNACION VALOR", true);
+        //EXPRESIONES ARITMETICAS
+        gramatica.loopForFunExecUntilChangeNotDetected(() -> {
+            gramatica.group("EXPRESION", "(VALOR | VARIABLE) ((OPSUMA | OPRESTA | OPDIVISION | OPMULTIPLICACION) (VALOR | VARIABLE))+");
+        });
         
-        gramatica.group("DECLARACION", "PRDECLARAR VALOR OPASIGNACION VARIABLE", true, 
+        //DECLARACION DE VARIABLES
+        gramatica.group("DECLARACION", "PRDECLARAR VARIABLE OPASIGNACION (VALOR | EXPRESION)", true, identProd);
+        
+        gramatica.group("DECLARACION", "PRDECLARAR (VALOR | EXPRESION) OPASIGNACION VARIABLE", true, 
                 1, "ERROR SINTÁCTICO {}: Declaración no válida [#]");
-        gramatica.group("DECLARACION", "PRDECLARAR OPASIGNACION VALOR", true, 
+        gramatica.group("DECLARACION", "PRDECLARAR OPASIGNACION (VALOR | EXPRESION)", true, 
                 2, "ERROR SINTÁCTICO {}: Declaración no válida [#]");
-        gramatica.group("DECLARACION", "PRDECLARAR VARIABLE VALOR", true, 
+        gramatica.group("DECLARACION", "PRDECLARAR VARIABLE (VALOR | EXPRESION)", true, 
                 3, "ERROR SINTÁCTICO {}: Se espera signo de asignación [#]");
         gramatica.group("DECLARACION", "PRDECLARAR VARIABLE OPASIGNACION", true, 
                 4, "ERROR SINTÁCTICO {}: Se espera valor en la declaración [#]");
         gramatica.group("DECLARACION", "PRDECLARAR VARIABLE", true, 
                 5, "ERROR SINTÁCTICO {}: Declaración no válida [#]");
-        gramatica.group("DECLARACION", "PRDECLARAR VALOR", true, 
+        gramatica.group("DECLARACION", "PRDECLARAR (VALOR | EXPRESION)", true, 
                 6, "ERROR SINTÁCTICO {}: Declaración no válida [#]");
         gramatica.group("DECLARACION", "PRDECLARAR OPASIGNACION", true, 
                 7, "ERROR SINTÁCTICO {}: Declaración no válida [#]");
         
-        //ASIGNACIÓN DE VALORES
-        gramatica.group("ASIGNACION", "VARIABLE OPASIGNACION VALOR", true);
+        gramatica.delete("PRDECLARAR", 24, 
+                "ERROR SINTÁCTICO {}: '[]' no está en una sentencia [#]");
         
-        gramatica.group("ASIGNACION", "VALOR OPASIGNACION VARIABLE", true, 
+        //ASIGNACIÓN DE VALORES
+        gramatica.group("ASIGNACION", "VARIABLE OPASIGNACION (VALOR | EXPRESION | VARIABLE)", true);
+        
+        gramatica.group("ASIGNACION", "(VALOR | EXPRESION) OPASIGNACION VARIABLE", true, 
                 8, "ERROR SINTÁCTICO {}: Asignación no válida [#]");
-        gramatica.group("ASIGNACION", "OPASIGNACION VALOR", true, 
+        gramatica.group("ASIGNACION", "OPASIGNACION (VALOR | EXPRESION | VARIABLE)", true, 
                 9, "ERROR SINTÁCTICO {}: Se necesita variable para asignar valor [#]");
-        gramatica.group("ASIGNACION", "VARIABLE VALOR", true, 
+        gramatica.group("ASIGNACION", "VARIABLE (VALOR | EXPRESION | VARIABLE)", true, 
                 10, "ERROR SINTÁCTICO {}: Se espera signo de asignación [#]");
         gramatica.group("ASIGNACION", "VARIABLE OPASIGNACION", true, 
                 11, "ERROR SINTÁCTICO {}: Se espera valor en la asignación [#]");
@@ -470,13 +478,17 @@ public class Compiler extends javax.swing.JFrame {
         //SALIDA DE MENSAJES
         gramatica.group("MOSTRAR", "PRMOSTRAR (VALOR | VARIABLE)", true);
         
+        gramatica.delete("PRMOSTRAR", 25, 
+                "ERROR SINTÁCTICO {}: '[]' no está en una sentencia [#]");
+        
         //LEER ENTRADA
         gramatica.group("LEER", "PRLEER VARIABLE", true);
         
         gramatica.group("LEER", "PRLEER VALOR", true, 
                 12, "ERROR SINTÁCTICO {}: Sentencia no válida [#]");
         
-        //EXPRESIONES ARITMETICAS
+        gramatica.delete("PRLEER", 26, 
+                "ERROR SINTÁCTICO {}: '[]' no está en una sentencia [#]");
         
         //ESTRUCTURAS RELACIONALES
         //gramatica.loopForFunExecUntilChangeNotDetected(() -> {
@@ -576,14 +588,48 @@ public class Compiler extends javax.swing.JFrame {
         });
         
         gramatica.group("INICIO", "PRINICIO (INSTRUCCION)*");
+        
+        gramatica.group("INICIO", "(INSTRUCCION)+", 
+                22, "ERROR SINTÁCTICO {}: Falta estructura de inicio");
+        
         gramatica.group("FIN", "PRFIN", true);
+        
         gramatica.group("PROGRAMA", "INICIO FIN", true);
+        
+        gramatica.group("PROGRAMA", "INICIO", true, 
+                23, "ERROR SINTÁCTICO {}: Falta estructura de fin");
         
         gramatica.show();
     }
     
     private void semanticAnalysis(){
-        
+        //HashMap<String, String> identDataType = new HashMap<>();
+        //identDataType.put("color", "COLOR");
+        //identDataType.put("número", "NUMERO");
+        for (Production id : identProd) {
+            
+            //-----------LAS PRODUCCIONES
+            //System.out.println(id);
+            //System.out.println("*");
+            
+            //-----------METODOS
+//            System.out.println(id.lexemeRank(0)); //te da la palabra en la posición indicada
+//            System.out.println(id.lexemeRank(0, -1)); //te da toda la declaración
+//            System.out.println(id.lexicalCompRank(0)); //te da la producción en la posición indicada
+//            System.out.println(id.lexicalCompRank(0, -1)); //te da toda la producción
+//            System.out.println(id.tokenRank(0)); //te da el token en la posición indicada
+//            System.out.println(id.tokenRank(0, -1)); //te da toddo el token
+//            System.out.println("*");
+            
+            
+            //if (!identDataType.get(id.lexemeRank(0)).equals(id.lexicalCompRank(-1))) {
+              //  errors.add(new ErrorLSSL(1, " × Error semántico {}: valor no compatible con el tipo de dato [#, %]", id, true));
+            //}
+            //if (id.lexicalCompRank(-1).equals("COLOR") && !id.lexemeRank(-1).matches("#[0-9a-fA-F]+")) {
+              //  errors.add(new ErrorLSSL(2, " × Error lógico {}: el color no es un número hexadecimal [#, %]", id, false));
+            //}
+            //identificadores.put(id.lexemeRank(1), id.lexemeRank(-1));
+        }    
     }
     
     private void fillTableTokens(){
