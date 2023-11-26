@@ -39,6 +39,7 @@ public class Compiler extends javax.swing.JFrame {
     private ArrayList<TextColor> textsColor;
     private Timer timerKeyReleased;
     private ArrayList<Production> identProd;
+    private ArrayList<Production> asigProd;
     private HashMap<String, String> identificadores;
     private boolean codeHasBeenCompiled = false;
 
@@ -344,6 +345,7 @@ public class Compiler extends javax.swing.JFrame {
         errors = new ArrayList<>();
         textsColor = new ArrayList<>();
         identProd = new ArrayList<>();
+        asigProd = new ArrayList<>();
         identificadores = new HashMap<>();
         Functions.setAutocompleterJTextComponent(new String[]{"hola", "adios", "hasta la proxima", 
             "oli"}, CodeText, () -> {
@@ -384,6 +386,7 @@ public class Compiler extends javax.swing.JFrame {
         tokens.clear();
         errors.clear();
         identProd.clear();
+        asigProd.clear();
         identificadores.clear();
         codeHasBeenCompiled = false;
     }
@@ -464,7 +467,7 @@ public class Compiler extends javax.swing.JFrame {
                 "ERROR SINTÁCTICO {}: '[]' no está en una sentencia [#]");
         
         //ASIGNACIÓN DE VALORES
-        gramatica.group("ASIGNACION", "VARIABLE OPASIGNACION (VALOR | EXPRESION | VARIABLE)", true);
+        gramatica.group("ASIGNACION", "VARIABLE OPASIGNACION (VALOR | EXPRESION | VARIABLE)", true, asigProd);
         
         gramatica.group("ASIGNACION", "(VALOR | EXPRESION) OPASIGNACION VARIABLE", true, 
                 8, "ERROR SINTÁCTICO {}: Asignación no válida [#]");
@@ -621,6 +624,8 @@ public class Compiler extends javax.swing.JFrame {
 //            System.out.println(id.tokenRank(0, -1)); //te da toddo el token
 //            System.out.println("*");
             
+            identificadores.put(id.lexemeRank(1), id.lexemeRank(-1));
+            
             
             //if (!identDataType.get(id.lexemeRank(0)).equals(id.lexicalCompRank(-1))) {
               //  errors.add(new ErrorLSSL(1, " × Error semántico {}: valor no compatible con el tipo de dato [#, %]", id, true));
@@ -629,7 +634,31 @@ public class Compiler extends javax.swing.JFrame {
               //  errors.add(new ErrorLSSL(2, " × Error lógico {}: el color no es un número hexadecimal [#, %]", id, false));
             //}
             //identificadores.put(id.lexemeRank(1), id.lexemeRank(-1));
-        }    
+        }
+//        System.out.println("--------------");
+//        if(identificadores.get("alumnos_aceptados") == null){
+//            System.out.println("hola");
+//        } else{
+//            System.out.println(identificadores.get("alumnos_rechazados"));
+//        }
+//        System.out.println("--------------");
+        
+        System.out.println("--------------");
+        
+        for (Production id : asigProd){
+            
+            if(identificadores.get(id.lexemeRank(0)) == null){
+                errors.add(new ErrorLSSL(1, "ERROR SEMÁNTICO {}: Variable no definida [#]", id, true));
+                System.out.println("NO SE PUEDE HACER LA ASIGNACIÓN");
+                System.out.println("******************");
+            } else{
+                identificadores.replace(id.lexemeRank(0), id.lexemeRank(-1));
+                System.out.println("SI SE PUEDE HACER LA ASIGNACIÓN");
+                System.out.println("******************");
+            }
+        }
+        
+        System.out.println("--------------");
     }
     
     private void fillTableTokens(){
