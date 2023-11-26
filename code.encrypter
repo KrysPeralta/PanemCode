@@ -20,4 +20,19 @@ hola = 9 AND hola = 9 hola = 9
 
 hola INC
 
-INC "hola" 
+INC "hola"
+
+repeat {
+
+	show: "Registre la edad del alumno " % alumno % " : "
+	read edad
+
+	check edad > 18 AND edad < 25 AND ingresoMensual < 5000 AND promedio >= 90 AND promedio <= 100 {
+		probe
+			INC alumnos_aceptados
+		unlike
+			razon_alumnos +| "Razon alumno:" % alumno
+}
+	INC alumno
+
+} until (alumno > 5)

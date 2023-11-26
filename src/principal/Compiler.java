@@ -546,7 +546,33 @@ public class Compiler extends javax.swing.JFrame {
 
             gramatica.group("EST_CONDICIONAL", "PRCHECK PARENABRIR CONDICION PARENCERRAR LLAVEABRIR PRPROBE (INSTRUCCION)+ (PRUNLIKE (INSTRUCCION)+)? LLAVECERRAR");
 
-            gramatica.group("INSTRUCCION", "EST_CICLO | EST_CONDICIONAL | ASIGNACION | DECLARACION | MOSTRAR | LEER | COMBINACION | UNARIA | INSTRUCCION", true); 
+            gramatica.group("INSTRUCCION", "EST_CICLO | EST_CONDICIONAL | ASIGNACION | DECLARACION | MOSTRAR | LEER | COMBINACION | UNARIA | INSTRUCCION", true);
+            
+            gramatica.group("EST_CICLO", "PRREPEAT (INSTRUCCION)+ LLAVECERRAR PRUNTIL PARENABRIR CONDICION PARENCERRAR", 
+                    19, "ERROR SINTÁCTICO {}: Falta llave de apertura [#]");
+            gramatica.group("EST_CICLO", "PRREPEAT LLAVEABRIR (INSTRUCCION)+ PRUNTIL PARENABRIR CONDICION PARENCERRAR", 
+                    20, "ERROR SINTÁCTICO {}: Falta llave de cierre [#]");
+            gramatica.group("EST_CICLO", "PRREPEAT (INSTRUCCION)+ PRUNTIL PARENABRIR CONDICION PARENCERRAR", 
+                    21, "ERROR SINTÁCTICO {}: Faltan llaves [#]");
+            gramatica.group("EST_CICLO", "PRREPEAT LLAVEABRIR (INSTRUCCION)+ LLAVECERRAR PRUNTIL CONDICION PARENCERRAR", 
+                    22, "ERROR SINTÁCTICO {}: Falta parentesis de apertura [#]");
+            gramatica.group("EST_CICLO", "PRREPEAT LLAVEABRIR (INSTRUCCION)+ LLAVECERRAR PRUNTIL PARENABRIR CONDICION", 
+                    23, "ERROR SINTÁCTICO {}: Falta parentesis de cierre [#]");
+            gramatica.group("EST_CICLO", "PRREPEAT LLAVEABRIR (INSTRUCCION)+ LLAVECERRAR PRUNTIL CONDICION", 
+                    24, "ERROR SINTÁCTICO {}: Faltan parentesis [#]");
+            
+            gramatica.group("EST_CONDICIONAL", "PRCHECK CONDICION PARENCERRAR LLAVEABRIR PRPROBE (INSTRUCCION)+ (PRUNLIKE (INSTRUCCION)+)? LLAVECERRAR", 
+                    22, "ERROR SINTÁCTICO {}: Falta parentesis de apertura [#]");
+            gramatica.group("EST_CONDICIONAL", "PRCHECK PARENABRIR CONDICION LLAVEABRIR PRPROBE (INSTRUCCION)+ (PRUNLIKE (INSTRUCCION)+)? LLAVECERRAR", 
+                    23, "ERROR SINTÁCTICO {}: Falta parentesis de cierre [#]");
+            gramatica.group("EST_CONDICIONAL", "PRCHECK CONDICION LLAVEABRIR PRPROBE (INSTRUCCION)+ (PRUNLIKE (INSTRUCCION)+)? LLAVECERRAR", 
+                    24, "ERROR SINTÁCTICO {}: Faltan parentesis [#]");
+            gramatica.group("EST_CONDICIONAL", "PRCHECK PARENABRIR CONDICION PARENCERRAR PRPROBE (INSTRUCCION)+ (PRUNLIKE (INSTRUCCION)+)? LLAVECERRAR", 
+                    19, "ERROR SINTÁCTICO {}: Falta llave de apertura [#]");
+            gramatica.group("EST_CONDICIONAL", "PRCHECK PARENABRIR CONDICION PARENCERRAR LLAVEABRIR PRPROBE (INSTRUCCION)+ (PRUNLIKE (INSTRUCCION)+)?", 
+                    20, "ERROR SINTÁCTICO {}: Falta llave de cierre [#]");
+            gramatica.group("EST_CONDICIONAL", "PRCHECK PARENABRIR CONDICION PARENCERRAR PRPROBE (INSTRUCCION)+ (PRUNLIKE (INSTRUCCION)+)?", 
+                    21, "ERROR SINTÁCTICO {}: Faltan llaves [#]");
         });
         
         gramatica.group("INICIO", "PRINICIO (INSTRUCCION)*");
