@@ -18,7 +18,7 @@ Espacio = [ \t\f|\r|\n|\r\n]
 Caden = [\"][^\"]*[\"]
 Dec = [0-9]+(\.[0-9]+)
 Compar = [\>\<]
-Sig = [\,\'\;\.\?\¿\!\¡\#\$\-]
+Sig = [\'\,\.\?\¿\!\¡\#\$\-]
 %%
 
 "--#".*"--#" {/*Ignore*/}
@@ -82,6 +82,10 @@ fnc | class {return token(yytext(), "RESERVADAS", yyline, yycolumn);}
 "&" | "||" {return token(yytext(), "OPCOMPARACION", yyline, yycolumn);}
 
 "%" {return token(yytext(), "OPCONCATENACION", yyline, yycolumn);}
+
+"#?" {return token(yytext(), "GATO", yyline, yycolumn);}
+
+";" {return token(yytext(), "COMA", yyline, yycolumn);}
 
 {Letra}({Letra}|{Digito})* ("_" {Letra}({Letra}|{Digito})*)* {return token(yytext(), "VARIABLE", yyline, yycolumn);}
 

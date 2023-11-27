@@ -14,6 +14,7 @@ import compilerTools.Production;
 import compilerTools.TextColor;
 import compilerTools.Token;
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -34,17 +35,24 @@ public class Compiler extends javax.swing.JFrame {
     
     private String title;
     private Directory directorio;
-    private ArrayList<Token> tokens;
-    private ArrayList<ErrorLSSL> errors;
+    
+    private ArrayList<ErrorLSSL> errors; //Guarda errores de tipo léxico, sintactico y semántico
+    
     private ArrayList<TextColor> textsColor;
     private Timer timerKeyReleased;
-    private ArrayList<Production> identProd;
-    private ArrayList<Production> asigProd;
-    private ArrayList<Production> unarProd;
-    private ArrayList<Production> combProd;
-    private ArrayList<Production> expProd;
-    private ArrayList<Production> relaProd;
-    private HashMap<String, String> identificadores;
+    
+    private ArrayList<Token> tokens; //Guarda los tokens del análisis léxico
+    
+    //Guarda las producciones para el análisis semántico
+    private ArrayList<Production> identProd; //Identificadores
+    private ArrayList<Production> asigProd; //Asignaciones
+    private ArrayList<Production> unarProd; //Operaciones unarias
+    private ArrayList<Production> combProd; //Operaciones de combinación
+    private ArrayList<Production> expProd; //Expresiones aritméticas
+    private ArrayList<Production> relaProd; //Relaciones
+    
+    private HashMap<String, String> identificadores; //Guarda todos los identficadores (su nombre y valor)
+    
     private boolean codeHasBeenCompiled = false;
 
     public Compiler() {
@@ -195,20 +203,17 @@ public class Compiler extends javax.swing.JFrame {
                         .addComponent(NewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(BackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(TokensScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(TokensScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(BackPanelLayout.createSequentialGroup()
-                        .addGroup(BackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(BackPanelLayout.createSequentialGroup()
-                                .addComponent(LexicalBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(SyntacticBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(SemanticBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(BackPanelLayout.createSequentialGroup()
-                                .addComponent(RunBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(CompileBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 58, Short.MAX_VALUE)))
+                        .addComponent(LexicalBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(SyntacticBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(SemanticBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(BackPanelLayout.createSequentialGroup()
+                        .addComponent(RunBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(CompileBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         BackPanelLayout.setVerticalGroup(
@@ -223,9 +228,8 @@ public class Compiler extends javax.swing.JFrame {
                             .addComponent(OpenBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(SaveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(SaveAsBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(NewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 20, Short.MAX_VALUE))
-                    .addComponent(TokensScroll))
+                            .addComponent(NewBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(TokensScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(BackPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(BackPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -276,13 +280,14 @@ public class Compiler extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_SaveAsBtnActionPerformed
 
+    //Generar nuevo espacio para escribir código
     private void NewBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NewBtnActionPerformed
         directorio.New();
         clearFields();
     }//GEN-LAST:event_NewBtnActionPerformed
 
     private void LexicalBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LexicalBtnActionPerformed
-        // TODO add your handling code here:
+        // TODO add 
     }//GEN-LAST:event_LexicalBtnActionPerformed
 
     private void SyntacticBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SyntacticBtnActionPerformed
@@ -301,10 +306,11 @@ public class Compiler extends javax.swing.JFrame {
                         "No se puede ejecutar el código ya que se encontró uno o más errores",
                         "Error en la compilación", JOptionPane.ERROR_MESSAGE);
             } else {
-//                CodeBlock codeBlock = Functions.splitCodeInCodeBlocks(tokens, "{", "}", ";");
-//                System.out.println(codeBlock);
-//                ArrayList<String> blocksOfCode = codeBlock.getBlocksOfCodeInOrderOfExec();
-//                System.out.println(blocksOfCode);
+                CodeBlock codeBlock = Functions.splitCodeInCodeBlocks(tokens, "{", "}", ";");
+                System.out.println(codeBlock);
+                ArrayList<String> blocksOfCode = codeBlock.getBlocksOfCodeInOrderOfExec();
+                System.out.println(blocksOfCode);
+                executeCode(blocksOfCode, 1);
 
             }
         }
@@ -320,31 +326,118 @@ public class Compiler extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_CompileBtnActionPerformed
 
+    private void executeCode(ArrayList<String> blocksOfCode, int repeats) {
+        for (int j = 1; j <= repeats; j++) {
+            int repeatCode = -1;
+            for (int i = 0; i < blocksOfCode.size(); i++) {
+                String blockOfCode = blocksOfCode.get(i);
+                if (repeatCode != -1) {
+                    int[] posicionMarcador = CodeBlock.getPositionOfBothMarkers(blocksOfCode, blockOfCode);
+                    executeCode(new ArrayList<>(blocksOfCode.subList(posicionMarcador[0], posicionMarcador[1])), repeatCode);
+                    repeatCode = -1;
+                    i = posicionMarcador[1];
+                } else {
+                    String[] sentences = blockOfCode.split(";");
+                    for (String sentence : sentences) {
+                        
+                        System.out.println(sentence);
+                        
+                        if (sentence.startsWith(" show:") || sentence.startsWith("show:")) {
+                            
+                            if (sentence.contains("%")) {
+                                System.out.println("--------------------------");
+                                System.out.println("No se puede imprimir la variable");
+                                System.out.println("--------------------------");
+                            } 
+                            else if (sentence.startsWith("show:")){
+                                System.out.println("--------------------------");
+                                System.out.println(sentence.substring(7, sentence.length()-2));
+                                System.out.println("--------------------------");
+                            } else {
+                                System.out.println("--------------------------");
+                                System.out.println(sentence.substring(8, sentence.length()-2));
+                                System.out.println("--------------------------");
+                            }
+                        }
+                        
+                        
+//                        sentence = sentence.trim();
+//                        // Llamar código de ejecución (arduino, gráfico, etc)
+
+//                        if (sentence.startsWith("pintar")) {
+//                            String parametro;
+//                            if (sentence.contains("$")) {
+//                                parametro = identificadores.get(sentence.substring(9, sentence.length() - 2));
+//                            } 
+//                            else {
+//                                parametro = sentence.substring(9, sentence.length() - 2);
+//                            }
+//                            System.out.println("Pintando de color " + parametro + "...");
+//                        } 
+                        
+                        
+//                        else if (sentence.startsWith("izquierda")) {
+//                            System.out.println("Moviéndose a la izquierda...");
+//                        } else if (sentence.startsWith("derecha")) {
+//                            System.out.println("Moviéndose a la derecha...");
+//                        } else if (sentence.startsWith("adelante")) {
+//                            System.out.println("Moviéndose hacia adelante");
+//                        } else if (sentence.contains("-->")) {
+//                            String[] identComp = sentence.split(" ");
+//                            System.out.println("Declarando identificador " + identComp[1] + " igual a " + identComp[3]);
+//                        } else if (sentence.startsWith("atrás")) {
+//                            System.out.println("Moviéndose hacia atrás");
+//                        } else if (sentence.startsWith("repetir")) {
+//                            String parametro;
+//                            if (sentence.contains("$")) {
+//                                parametro = identificadores.get(sentence.substring(10, sentence.length() - 2));
+//                            } else {
+//                                parametro = sentence.substring(10, sentence.length() - 2);
+//                            }
+//                            repeatCode = Integer.parseInt(parametro);
+//                        }
+                    }
+                }
+            }
+        }
+    }
+    
     //MÉTODOS
     
-    //DISEÑO
+    //-----------DISEÑO-----------
     
-    //Inicialización de la ventana
+    //Inicialización de la ventana-------------------------------***
     private void init() {
-        title = "Compilador de PanemCode";
+        title = "PanemCode";
         setLocationRelativeTo(null);
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/images/logo-panem-code.png")));
         setTitle(title);
-        directorio = new Directory(this, CodeText, title, ".txt");
+        directorio = new Directory(this, CodeText, title, ".txt"); //--------------------------------------------
+        
         addWindowListener(new WindowAdapter() {
             @Override
+            //Ventana para preguntar si guardar o descartar código
             public void windowClosing(WindowEvent e) {
                 directorio.Exit();
                 System.exit(0);
             }
         });
+        
+        //Mostrar número de linea
         Functions.setLineNumberOnJTextComponent(CodeText);
+        
+        //Pintar las palabras
         timerKeyReleased = new Timer((int) (1000 * 0.3), (ActionEvent e) -> {
             timerKeyReleased.stop();
             colorAnalysis();
         });
+        
+        //Poner asterisco en nombre del proyecto
         Functions.insertAsteriskInName(this, CodeText, () -> {
             timerKeyReleased.restart();
         });
+        
+        //Inicialización de los arraylist y hashmap
         tokens = new ArrayList<>();
         errors = new ArrayList<>();
         textsColor = new ArrayList<>();
@@ -355,13 +448,15 @@ public class Compiler extends javax.swing.JFrame {
         expProd = new ArrayList<>();
         relaProd = new ArrayList<>();
         identificadores = new HashMap<>();
+        
+        //Predicción de palabras (Ctrl + Space)
         Functions.setAutocompleterJTextComponent(new String[]{"hola", "adios", "hasta la proxima", 
             "oli"}, CodeText, () -> {
             timerKeyReleased.restart();
-        });
+        }); //--------------------------------------------
     }
     
-    //Colores en el código
+    //Colores en el código-------------------------------***
     private void colorAnalysis() {
         textsColor.clear();
         LexerColor lexerColor;
@@ -387,10 +482,11 @@ public class Compiler extends javax.swing.JFrame {
         Functions.colorTextPane(textsColor, CodeText, new Color(40, 40, 40));
     }
     
-    //Limpiar panel de código
+    //Limpiar panel de código-------------------------------***
     private void clearFields(){
         Functions.clearDataInTable(TokensTable);
         ConsoleText.setText("");
+        ConsoleText.setForeground(new Color(0,0,0));
         tokens.clear();
         errors.clear();
         identProd.clear();
@@ -403,18 +499,26 @@ public class Compiler extends javax.swing.JFrame {
         codeHasBeenCompiled = false;
     }
     
-    //COMPILACIÓN
+    //-----------COMPILACIÓN-----------
     
+    //Realiza la compilación del código-------------------------------***
     private void compile(){
-        clearFields();
+        clearFields(); //Limpiar campos
+        
+        //Partes de la compilación
         lexicalAnalysis();
         fillTableTokens();
         syntacticAnalysis();
         semanticAnalysis();
+        
+        //Imprimir en consola
         printConsole();
+        
         codeHasBeenCompiled = true;
     }
     
+    
+    //Análisis léxico-------------------------------***
     private void lexicalAnalysis(){
         Lexer lexer;
         try {
@@ -438,6 +542,8 @@ public class Compiler extends javax.swing.JFrame {
         }
     }
     
+    
+    //Análisis sintáctico-------------------------------***
     private void syntacticAnalysis(){
         Grammar gramatica = new Grammar(tokens, errors);
         
@@ -458,7 +564,7 @@ public class Compiler extends javax.swing.JFrame {
         });
         
         //DECLARACION DE VARIABLES
-        gramatica.group("DECLARACION", "PRDECLARAR VARIABLE OPASIGNACION (VALOR | EXPRESION)", true, identProd);
+        gramatica.group("DECLARACION", "PRDECLARAR VARIABLE OPASIGNACION (VALOR | EXPRESION) COMA", true, identProd);
         
         gramatica.group("DECLARACION", "PRDECLARAR (VALOR | EXPRESION) OPASIGNACION VARIABLE", true, 
                 1, "ERROR SINTÁCTICO {}: Declaración no válida [#]");
@@ -479,7 +585,7 @@ public class Compiler extends javax.swing.JFrame {
                 "ERROR SINTÁCTICO {}: '[]' no está en una sentencia [#]");
         
         //ASIGNACIÓN DE VALORES
-        gramatica.group("ASIGNACION", "VARIABLE OPASIGNACION (VALOR | EXPRESION | VARIABLE)", true, asigProd);
+        gramatica.group("ASIGNACION", "VARIABLE OPASIGNACION (VALOR | EXPRESION | VARIABLE) COMA", true, asigProd);
         
         gramatica.group("ASIGNACION", "(VALOR | EXPRESION) OPASIGNACION VARIABLE", true, 
                 8, "ERROR SINTÁCTICO {}: Asignación no válida [#]");
@@ -491,13 +597,13 @@ public class Compiler extends javax.swing.JFrame {
                 11, "ERROR SINTÁCTICO {}: Se espera valor en la asignación [#]");
         
         //SALIDA DE MENSAJES
-        gramatica.group("MOSTRAR", "PRMOSTRAR (VALOR | VARIABLE)", true);
+        gramatica.group("MOSTRAR", "PRMOSTRAR (VALOR | VARIABLE) COMA", true);
         
         gramatica.delete("PRMOSTRAR", 25, 
                 "ERROR SINTÁCTICO {}: '[]' no está en una sentencia [#]");
         
         //LEER ENTRADA
-        gramatica.group("LEER", "PRLEER VARIABLE", true);
+        gramatica.group("LEER", "PRLEER VARIABLE COMA", true);
         
         gramatica.group("LEER", "PRLEER VALOR", true, 
                 12, "ERROR SINTÁCTICO {}: Sentencia no válida [#]");
@@ -532,7 +638,7 @@ public class Compiler extends javax.swing.JFrame {
         //});
         
         //OPERACIONES DE COMBINACIÓN
-        gramatica.group("COMBINACION", "VARIABLE OPCOMBINADO (VALOR | VARIABLE)", true, combProd);
+        gramatica.group("COMBINACION", "VARIABLE OPCOMBINADO (VALOR | VARIABLE) COMA", true, combProd);
         
         gramatica.group("COMBINACION", "OPCOMBINADO (VALOR | VARIABLE)", true, 
                 15, "ERROR SINTÁCTICO {}: Se necesita otro valor [#]");
@@ -541,7 +647,7 @@ public class Compiler extends javax.swing.JFrame {
                 16, "ERROR SINTÁCTICO {}: Sentencia no válida [#]");
         
         //OPERACIONES UNARIAS
-        gramatica.group("UNARIA", "(OPINCREMENTO | OPDECREMENTO | OPINVERSION) VARIABLE", true, unarProd);
+        gramatica.group("UNARIA", "(OPINCREMENTO | OPDECREMENTO | OPINVERSION) VARIABLE COMA", true, unarProd);
         
         gramatica.group("UNARIA", "VARIABLE (OPINCREMENTO | OPDECREMENTO | OPINVERSION)", true, 
                 17, "ERROR SINTÁCTICO {}: Sentencia no válida [#]");
@@ -602,12 +708,12 @@ public class Compiler extends javax.swing.JFrame {
                     21, "ERROR SINTÁCTICO {}: Faltan llaves [#]");
         });
         
-        gramatica.group("INICIO", "PRINICIO (INSTRUCCION)*");
+        gramatica.group("INICIO", "PRINICIO LLAVEABRIR (INSTRUCCION)*");
         
         gramatica.group("INICIO", "(INSTRUCCION)+", 
                 22, "ERROR SINTÁCTICO {}: Falta estructura de inicio");
         
-        gramatica.group("FIN", "PRFIN", true);
+        gramatica.group("FIN", "LLAVECERRAR PRFIN", true);
         
         gramatica.group("PROGRAMA", "INICIO FIN", true);
         
@@ -617,6 +723,7 @@ public class Compiler extends javax.swing.JFrame {
         gramatica.show();
     }
     
+    //Análisis semántico-------------------------------***
     private void semanticAnalysis(){
         //System.out.println(identDataType.get("edad"));
         
@@ -633,8 +740,8 @@ public class Compiler extends javax.swing.JFrame {
 //            System.out.println(id.tokenRank(0, -1)); //te da toddo el token
 //            System.out.println("*");
             
-            identificadores.put(id.lexemeRank(1), id.lexemeRank(-1));
-            identDataType.put(id.lexemeRank(1), id.lexicalCompRank(-1));
+            identificadores.put(id.lexemeRank(1), id.lexemeRank(3));
+            identDataType.put(id.lexemeRank(1), id.lexicalCompRank(3));
             
         }
         
@@ -647,8 +754,8 @@ public class Compiler extends javax.swing.JFrame {
                 //System.out.println("NO SE PUEDE HACER LA ASIGNACIÓN");
                 //System.out.println("******************");
             } else{
-                identificadores.replace(id.lexemeRank(0), id.lexemeRank(-1));
-                identDataType.replace(id.lexemeRank(0), id.lexicalCompRank(-1));
+                identificadores.replace(id.lexemeRank(0), id.lexemeRank(2));
+                identDataType.replace(id.lexemeRank(0), id.lexicalCompRank(2));
                 //System.out.println("SI SE PUEDE HACER LA ASIGNACIÓN");
                 //System.out.println("******************");
             }
@@ -670,11 +777,13 @@ public class Compiler extends javax.swing.JFrame {
                 //System.out.println("EL TIPO DE DATO NO ES ENTERO NI DECIMAL");
                 //System.out.println("******************");
             } else {
-                int nuevoValor = Integer.parseInt(identificadores.get(id.lexemeRank(1)));
-                nuevoValor++;
-                String incrementar = String.valueOf(nuevoValor);
-                
-                identificadores.replace(id.lexemeRank(1), incrementar);
+                //------------
+//                int nuevoValor = Integer.parseInt(identificadores.get(id.lexemeRank(1)));
+//                nuevoValor++;
+//                String incrementar = String.valueOf(nuevoValor);
+//                
+//                identificadores.replace(id.lexemeRank(1), incrementar);
+                //------------
                 
                 //System.out.println("SI SE PUEDE HACER LA OPERACIÓN");
                 //System.out.println("******************");
@@ -687,7 +796,7 @@ public class Compiler extends javax.swing.JFrame {
         System.out.println("-------COMBINACION-------");
         
         for (Production id : combProd){
-
+            
             if(identificadores.get(id.lexemeRank(0)) == null){
                 //errors.add(new ErrorLSSL(1, "ERROR SEMÁNTICO {}: Variable no definida [#]", id, true));
                 System.out.println("NO SE ENCONTRÓ EL IDENTIFICADOR");
@@ -725,8 +834,8 @@ public class Compiler extends javax.swing.JFrame {
                 //System.out.println("NO SE PUEDE HACER LA ASIGNACIÓN");
                 //System.out.println("******************");
             } else{
-                identificadores.replace(id.lexemeRank(0), id.lexemeRank(-1));
-                identDataType.replace(id.lexemeRank(0), id.lexicalCompRank(-1));
+//                identificadores.replace(id.lexemeRank(0), id.lexemeRank(-1));
+//                identDataType.replace(id.lexemeRank(0), id.lexicalCompRank(-1));
                 //System.out.println("SI SE PUEDE HACER LA ASIGNACIÓN");
                 //System.out.println("******************");
             }
@@ -735,6 +844,8 @@ public class Compiler extends javax.swing.JFrame {
         System.out.println("--------------");
     }
     
+    
+    //Llenar tabla de tokens-------------------------------***
     private void fillTableTokens(){
         AtomicInteger id = new AtomicInteger(1);
         
@@ -745,7 +856,12 @@ public class Compiler extends javax.swing.JFrame {
         });
     }
     
+    
+    //Imprimir en consola-------------------------------***
     private void printConsole(){
+        
+        ConsoleText.setForeground(new Color(0,0,0));
+        
         int sizeErrors = errors.size();
         if (sizeErrors > 0) {
             Functions.sortErrorsByLineAndColumn(errors);
@@ -754,10 +870,13 @@ public class Compiler extends javax.swing.JFrame {
                 String strError = String.valueOf(error);
                 strErrors += strError + "\n";
             }
-            ConsoleText.setText("Compilación terminada...\n" + strErrors 
-                    + "\nLa compilación terminó con errores...");
+            ConsoleText.setText("COMPILACIÓN COMPLETA:\n" + strErrors 
+                    + "\nSe encontraron errores al compilar"); //-----CAMBIAR COLOR
+            ConsoleText.setForeground(new Color(153,0,0));
         } else {
-            ConsoleText.setText("Compilación terminada...");
+            ConsoleText.setText("COMPILACIÓN COMPLETA:\n" + 
+                    "\nCompilación terminada exitosamente y sin errores ");
+            ConsoleText.setForeground(new Color(0,51,0));
         }
         //ConsoleText.setCaretPosition(0);
     }

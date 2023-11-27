@@ -1,56 +1,15 @@
-power on
+power on{
 
-	establish alumnos_aceptados := 0
-	establish alumnos_rechazados := 0
-	establish razon_alumnos := ""
-	establish edad := 0
-	establish ingreso_mensual := 0.0
-	establish promedio := 0.0
+show: "bienvenido";
 
-	establish alumno := 1
+establish num1 := 2;
+establish num2 := 5;
+establish resultado := 0;
 
-	establish gracia := true
+resultado := num1 + num2;
 
-	repeat {
+show: "El resultado es" % resultado;
 
-		show: "Registre la edad del alumno " % alumno % " : "
-		read edad
+show: "hola";
 
-		show: "Registre el ingreso familiar mensual del alumno " % alumno % " : "
-		read ingreso_mensual
-
-		show: "Registre el promedio del alumno " % alumno % " : "
-		read promedio
-
-		check (edad > 18 AND edad < 25 AND ingresoMensual < 5000 AND promedio >= 90 AND promedio <= 100) {
-			probe
-				INC alumnos_aceptados
-			unlike
-				razon_alumnos +| "Razon alumno:" % alumno
-}
-
-		check (edad <= 18 OR edad >= 25) {
-			probe
-				razon_alumnos +| "Edad fuera del rango (debe ser mayor a 18 y menor de 25)."
-}
-
-		check (ingreso_mensual >= 5000) {
-			probe
-				razon_alumnos +| "Ingreso mensual de la familia demasiado alto."
-}
-
-		check (promedio < 90 OR promedio > 100) {
-			probe
-				razon_alumnos +| "Promedio fuera del rango (debe ser de 90 a 100)."
-}
-
-			INC alumnos_rechazados
-INC alumno
-
-	} until (alumno > 5)
-
-	show: "Numero de alumnos aceptados: " % alumnos_aceptados
-	show: "Numero de alumnos rechazados: " % alumnos_rechazados
-	show: razon_alumnos
-
-switch out
+}switch out
