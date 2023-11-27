@@ -5,11 +5,20 @@ show: "bienvenido";
 establish num1 := 2;
 establish num2 := 5;
 establish resultado := 0;
+establish resultado2 := 0;
 
 resultado := num1 + num2;
+
+resultado2 := 9 + 8 - 8 + 15;
+
+resultado2 := num2 + 1 + num1;
 
 show: "El resultado es" % resultado;
 
 show: "hola";
+
+INC num1;
+
+RED num2;
 
 }switch out

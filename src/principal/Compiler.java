@@ -28,6 +28,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
@@ -342,22 +344,61 @@ public class Compiler extends javax.swing.JFrame {
                         
                         System.out.println(sentence);
                         
-                        if (sentence.startsWith(" show:") || sentence.startsWith("show:")) {
+                        sentence = sentence.trim();
+                        
+                        //IMPRIMIR CADENAS
+                        if (sentence.startsWith("show:")) {
                             
                             if (sentence.contains("%")) {
                                 System.out.println("--------------------------");
                                 System.out.println("No se puede imprimir la variable");
                                 System.out.println("--------------------------");
                             } 
-                            else if (sentence.startsWith("show:")){
+                            else {
                                 System.out.println("--------------------------");
-                                System.out.println(sentence.substring(7, sentence.length()-2));
-                                System.out.println("--------------------------");
-                            } else {
-                                System.out.println("--------------------------");
-                                System.out.println(sentence.substring(8, sentence.length()-2));
+                                System.out.println(sentence.substring(7, sentence.length()-1));
                                 System.out.println("--------------------------");
                             }
+                        } 
+                        else if(sentence.contains("+") || sentence.contains("-") || sentence.contains("*") || sentence.contains("/")){
+                            int resultado = 0;
+                            ArrayList<Integer> numeros = new ArrayList<>();
+                            
+                            int posicion = sentence.indexOf(":=");
+                            System.out.println("--------------------------");
+                            System.out.println(sentence.substring(posicion+3));
+                            
+                            String values = sentence.substring(posicion+3);
+                            
+                            Pattern patron1 = Pattern.compile("^([^\\s]+)");
+                            
+                            Matcher matcher1 = patron1.matcher(values);
+//
+//                            // Iterar sobre las coincidencias encontradas
+                            if (matcher1.find()) {
+                                String valor = matcher1.group(1);
+                                //aqui va while
+                                if(identificadores.get(valor) != null){
+                                    valor = identificadores.get(valor);
+                                }
+                                System.out.println(valor);
+                            }
+                            
+                            
+                            Pattern patron2 = Pattern.compile("[\\+\\-\\*\\/]\\s*(\\d+|\\w+)");
+                            
+                            Matcher matcher2 = patron2.matcher(values);
+//
+//                            // Iterar sobre las coincidencias encontradas
+                            while (matcher2.find()) {
+                                String valor = matcher2.group(1);
+                                //aqui va while
+                                if(identificadores.get(valor) != null){
+                                    valor = identificadores.get(valor);
+                                }
+                                System.out.println(valor);
+                            }
+                            System.out.println("***************************");
                         }
                         
                         
