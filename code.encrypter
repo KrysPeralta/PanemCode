@@ -6,6 +6,12 @@ establish num1 := 2;
 establish num2 := 5;
 establish resultado := 0;
 establish resultado2 := 0;
+establish resultado3 := 10;
+establish resultado4 := 20;
+establish resultado5 := 0;
+establish resultado6 := 0;
+
+show: resultado6;
 
 resultado := num1 + num2;
 
@@ -13,7 +19,13 @@ resultado2 := 9 + 8 - 8 + 15;
 
 resultado2 := num2 + 1 + num1;
 
-show: "El resultado es" % resultado;
+resultado3 := resultado4;
+
+resultado5 := resultado3 - 5; 
+
+resultado6 := 20 + 10 * 2 - 25;
+
+show: "El resultado es";
 
 show: "hola";
 
