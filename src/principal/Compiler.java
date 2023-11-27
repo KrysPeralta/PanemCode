@@ -15,8 +15,11 @@ import compilerTools.TextColor;
 import compilerTools.Token;
 import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -34,7 +37,12 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 public class Compiler extends javax.swing.JFrame {
@@ -64,6 +72,32 @@ public class Compiler extends javax.swing.JFrame {
     public Compiler() {
         initComponents();
         init();
+        TokensTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 12));
+        TokensTable.getTableHeader().setOpaque(false);
+        TokensTable.getTableHeader().setBackground(new Color(20, 108, 148));
+        TokensTable.getTableHeader().setForeground(new Color(255, 255, 255));
+        TokensTable.setRowHeight(25);
+        
+        setKeyBindings();
+    }
+    
+    private void setKeyBindings() {
+        InputMap inputMap = this.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = this.getRootPane().getActionMap();
+
+        KeyStroke keyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK);
+
+        inputMap.put(keyStroke, "ctrlSAction");
+        actionMap.put("ctrlSAction", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Acción a realizar al presionar Ctrl + S
+                System.out.println("Ctrl + S presionado");
+                if (directorio.Save()) {
+                    clearFields();
+                }
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -100,6 +134,8 @@ public class Compiler extends javax.swing.JFrame {
         ConsoleText.setColumns(20);
         ConsoleText.setRows(5);
         ConsoleScroll.setViewportView(ConsoleText);
+
+        TokensScroll.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(102, 102, 102), new java.awt.Color(204, 204, 204), new java.awt.Color(153, 153, 153), new java.awt.Color(153, 153, 153)));
 
         TokensTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

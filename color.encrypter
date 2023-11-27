@@ -21,7 +21,7 @@ resultado2 := num2 + 1 + num1;
 
 resultado3 := resultado4;
 
-resultado5 := resultado3 - 5; 
+resultado5 := resultado3 - 5;
 
 resultado6 := 20 + 10 * 2 - 25;
 
